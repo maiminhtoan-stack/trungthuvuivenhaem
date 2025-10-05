@@ -9,30 +9,23 @@
       margin: 0;
       overflow: hidden;
       background: black;
-      font-family: "Arial", sans-serif;
+      font-family: 'Poppins', sans-serif;
     }
-
     h1 {
       position: absolute;
-      top: 40px;
+      top: 30px;
       width: 100%;
       text-align: center;
       font-size: 28px;
-      color: #ffd6f6;
-      text-shadow: 0 0 15px #ff80d5;
+      color: #ffb6f2;
+      text-shadow: 0 0 20px #ff66cc;
       animation: glow 2s ease-in-out infinite alternate;
       z-index: 10;
     }
-
     @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #ff66cc;
-      }
-      to {
-        text-shadow: 0 0 25px #ffffff;
-      }
+      from { text-shadow: 0 0 10px #ff66cc; }
+      to { text-shadow: 0 0 30px #ffffff; }
     }
-
     canvas {
       display: block;
     }
@@ -40,23 +33,13 @@
 </head>
 
 <body>
-  <h1>Chúc em trung thu vui vẻ 💖<br /> iu em nhìu ơi là nhìu </h1>
+  <h1>Chúc em trung thu vui vẻ 💖<br/>Iu em nhìu nhìu nhaa 💕</h1>
 
-  <!-- Nhạc nền -->
-  <audio autoplay loop>
-    <source src="https://files.catbox.moe/ovp7nx.mp3" type="audio/mpeg" />
-  </audio>
-
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <script>
     let scene = new THREE.Scene();
-    let camera = new THREE.PerspectiveCamera(
-      75,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      1000
-    );
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     let renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
@@ -64,104 +47,70 @@
     const stars = new THREE.Group();
     scene.add(stars);
 
-    // 🌠 Sao rơi
-    function createStars() {
-      for (let i = 0; i < 200; i++) {
-        const geometry = new THREE.SphereGeometry(Math.random() * 0.05, 8, 8);
-        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        const star = new THREE.Mesh(geometry, material);
-        star.position.set(
-          (Math.random() - 0.5) * 100,
-          Math.random() * 50,
-          (Math.random() - 0.5) * 100
-        );
-        stars.add(star);
-      }
+    // Tạo nền sao
+    for (let i = 0; i < 200; i++) {
+      const star = new THREE.Mesh(
+        new THREE.SphereGeometry(Math.random() * 0.05, 8, 8),
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
+      );
+      star.position.set((Math.random() - 0.5) * 100, Math.random() * 50, (Math.random() - 0.5) * 100);
+      stars.add(star);
     }
-    createStars();
 
-    // 🎆 Pháo bông (5s đầu)
     const fireworks = [];
     function createFirework() {
       const group = new THREE.Group();
       const color = 0xffffff;
-      for (let i = 0; i < 80; i++) {
-        const geometry = new THREE.SphereGeometry(0.08, 8, 8);
-        const material = new THREE.MeshBasicMaterial({ color });
-        const particle = new THREE.Mesh(geometry, material);
+      for (let i = 0; i < 100; i++) {
+        const p = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8),
+          new THREE.MeshBasicMaterial({ color }));
         const theta = Math.random() * 2 * Math.PI;
         const phi = Math.acos(2 * Math.random() - 1);
-        particle.userData = {
-          velocity: new THREE.Vector3(
-            Math.sin(phi) * Math.cos(theta),
-            Math.cos(phi),
-            Math.sin(phi) * Math.sin(theta)
-          ).multiplyScalar(Math.random() * 0.6 + 0.2),
-        };
-        group.add(particle);
+        p.userData.velocity = new THREE.Vector3(
+          Math.sin(phi) * Math.cos(theta),
+          Math.cos(phi),
+          Math.sin(phi) * Math.sin(theta)
+        ).multiplyScalar(Math.random() * 0.6 + 0.2);
+        group.add(p);
       }
-      group.position.set(
-        (Math.random() - 0.5) * 20,
-        Math.random() * 10 + 2,
-        (Math.random() - 0.5) * 20
-      );
+      group.position.set((Math.random() - 0.5) * 20, Math.random() * 10 + 2, (Math.random() - 0.5) * 20);
       fireworks.push(group);
       scene.add(group);
     }
 
-    // 💖 Tạo trái tim sau 5s
     let heart, heartVisible = false;
     function createHeart() {
-      const heartShape = [];
+      const heartPoints = [];
       for (let i = 0; i < 2000; i++) {
         const t = Math.random() * Math.PI * 2;
         const x = 16 * Math.pow(Math.sin(t), 3);
-        const y =
-          13 * Math.cos(t) -
-          5 * Math.cos(2 * t) -
-          2 * Math.cos(3 * t) -
-          Math.cos(4 * t);
+        const y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
         const z = (Math.random() - 0.5) * 4;
-        heartShape.push(new THREE.Vector3(x, y, z));
+        heartPoints.push(new THREE.Vector3(x, y, z));
       }
-
-      const geometry = new THREE.BufferGeometry().setFromPoints(heartShape);
-      const material = new THREE.PointsMaterial({
-        color: 0xffffff,
-        size: 0.12,
-        transparent: true,
-        opacity: 0.8,
-      });
-
+      const geometry = new THREE.BufferGeometry().setFromPoints(heartPoints);
+      const material = new THREE.PointsMaterial({ color: 0xffffff, size: 0.12, opacity: 0.9, transparent: true });
       heart = new THREE.Points(geometry, material);
       heart.scale.set(0.5, 0.5, 0.5);
-      heart.position.set(0, 0, 0);
       scene.add(heart);
       heartVisible = true;
     }
 
     camera.position.z = 25;
-
     let startTime = Date.now();
 
     function animate() {
       requestAnimationFrame(animate);
       let elapsed = (Date.now() - startTime) / 1000;
-
-      // Sao di chuyển chậm
       stars.rotation.y += 0.0005;
 
-      // Pháo bông trong 5s đầu
       if (elapsed < 5) {
         if (Math.random() < 0.05) createFirework();
-        fireworks.forEach((fw, idx) => {
-          fw.children.forEach((p) => {
-            p.position.add(p.userData.velocity);
-            p.material.opacity -= 0.008;
-          });
-        });
+        fireworks.forEach(fw => fw.children.forEach(p => {
+          p.position.add(p.userData.velocity);
+          p.material.opacity -= 0.008;
+        }));
       } else {
-        // Sau 5s: hiện trái tim
         if (!heartVisible) createHeart();
         if (heart) {
           heart.rotation.y += 0.01;
@@ -173,10 +122,9 @@
 
       renderer.render(scene, camera);
     }
-
     animate();
 
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       camera.aspect = window.innerWidth / window.innerHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(window.innerWidth, window.innerHeight);
