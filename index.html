@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chúc em trung thu vui vẻ 💖</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: black;
+      font-family: 'Arial', sans-serif;
+    }
+    h1 {
+      position: absolute;
+      top: 40px;
+      width: 100%;
+      text-align: center;
+      font-size: 28px;
+      color: #ffb3d9;
+      text-shadow: 0 0 15px #ff66cc;
+      animation: glow 2s ease-in-out infinite alternate;
+      z-index: 10;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff66cc; }
+      to { text-shadow: 0 0 25px #ffffff; }
+    }
+    canvas { display: block; }
+  </style>
+</head>
+<body>
+  <h1>Chúc em trung thu vui vẻ 💖<br> iu em nhìu nhìu nhìu </h1>
+
+  <!-- Nhạc -->
+  <audio autoplay loop>
+    <source src="https://files.catbox.moe/ovp7nx.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Script Three.js -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/jsm/controls/OrbitControls.min.js"></script>
+
+  <script>
+    let scene = new THREE.Scene();
+    let camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    let renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.body.appendChild(renderer.domElement);
+
+    // ánh sáng
+    const light = new THREE.PointLight(0xffffff, 2);
+    light.position.set(0, 20, 20);
+    scene.add(light);
+
+    // Tạo hạt trái tim
+    const heartShape = [];
+    for (let i = 0; i < 2000; i++) {
+      const t = Math.random() * Math.PI * 2;
+      const x = 16 * Math.pow(Math.sin(t), 3);
+      const y = 13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t);
+      const z = (Math.random() - 0.5) * 4;
+      heartShape.push(new THREE.Vector3(x, y, z));
+    }
+
+    const geometry = new THREE.BufferGeometry().setFromPoints(heartShape);
+    const material = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.1,
+      transparent: true,
+      opacity: 0.9
+    });
+
+    const heart = new THREE.Points(geometry, material);
+    heart.scale.set(0.5, 0.5, 0.5);
+    scene.add(heart);
+
+    // Các chữ xung quanh
+    const fontLoader = new THREE.FontLoader();
+    fontLoader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (font) {
+      const messages = ["Yêu em 💖", "Love", "Em là tất cả", "Cảm ơn em", "Anh yêu em", "Trung Thu vui vẻ 🎆"];
+      messages.forEach((msg, i) => {
+        const textGeo = new THREE.TextGeometry(msg, {
+          font: font,
+          size: 0.6,
+          height: 0.05
+        });
+        const textMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const mesh = new THREE.Mesh(textGeo, textMat);
+        const angle = i * (Math.PI * 2 / messages.length);
+        mesh.position.set(Math.cos(angle) * 8, -5, Math.sin(angle) * 8);
+        mesh.rotation.y = -angle;
+        scene.add(mesh);
+      });
+    });
+
+    camera.position.z = 25;
+
+    // Animation
+    function animate() {
+      requestAnimationFrame(animate);
+      heart.rotation.y += 0.01;
+      heart.rotation.x += 0.005;
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
